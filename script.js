@@ -5,6 +5,7 @@ const saveConfirmed = document.querySelector(".save-confirmed");
 const loader = document.querySelector(".loader");
 const resultNavChild = resultantNav.querySelectorAll(".clickable");
 const favNavChild = favNav.querySelectorAll(".clickable");
+const container= document.querySelector(".container");
 
 //NASA API
 const count = 10;
@@ -23,6 +24,7 @@ function updateFavList(imgData, index) {
     favArray.push(imgData);
     saveConfirmed.textContent = "ADDED";
   }
+  localStorage.setItem("FavItems", JSON.stringify(favArray));
   saveConfirmed.classList.toggle("hidden");
   setTimeout(() => saveConfirmed.classList.toggle("hidden"), 2000);
 }
@@ -88,10 +90,13 @@ function updateDOM(photoList) {
 }
 
 async function getApiData() {
+  loader.classList.toggle("hidden");
+  container.classList.toggle("hidden");
   try {
     const response = await fetch(apiUrl);
     resultantArray = await response.json();
-    console.log(resultantArray);
+    loader.classList.toggle("hidden");
+    container.classList.toggle("hidden");
     updateDOM(resultantArray);
   } catch (err) {
     console.log(err, "error");
@@ -104,7 +109,10 @@ function changeScreen(array, favText) {
   favNav.classList.toggle("hidden");
   resultantNav.classList.toggle("hidden");
 }
-
+//Load Fav articles from localstorage
+if(localStorage.getItem("FavItems")){
+  favArray=JSON.parse(localStorage.getItem("FavItems"))
+}
 //onLoad
 getApiData();
 resultNavChild[0].addEventListener("click", () => changeScreen(favArray));
